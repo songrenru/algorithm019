@@ -29,8 +29,8 @@ func combine(n int, k int) [][]int {
 		temp = append(temp, i)
 		helper(i + 1)
 		temp = temp[:len(temp)-1]
-		// reverse state
 		helper(i + 1)
+		// reverse state
 	}
 	helper(1)
 	return res

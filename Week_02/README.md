@@ -1,4 +1,5 @@
 # 学习笔记
+
 ## 哈希表、映射、集合
 1. hashMap:就是一个hash表，存储k-v形式的数据，k值经过散列函数，得到一个array的index,然后再在定位到的index存储k-v数据;
 hashMap值，key不允许重复；hashTable有两种实现形式，拉链法、线性探测法，各有优劣；

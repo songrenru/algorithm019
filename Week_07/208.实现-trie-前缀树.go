@@ -19,9 +19,9 @@ func Constructor() Trie {
 
 /** Inserts a word into the trie. */
 func (this *Trie) Insert(word string)  {
-	lens := len(word)
 	node := this
-	for i := 0; i < lens; i++ {
+	l := len(word)
+	for i := 0; i < l; i++ {
 		idx := word[i] - 'a'
 		if node.next[idx] == nil {
 			node.next[idx] = new(Trie)
@@ -34,14 +34,9 @@ func (this *Trie) Insert(word string)  {
 
 /** Returns if the word is in the trie. */
 func (this *Trie) Search(word string) bool {
-	lens := len(word)
-	node := this
-	for i := 0; i < lens; i++ {
-		idx := word[i] - 'a'
-		if node.next[idx] == nil {
-			return false
-		}
-		node = node.next[idx]
+	node := this.searchPrefix(word)
+	if node == nil {
+		return false
 	}
 	return node.isEnd
 }
@@ -49,16 +44,22 @@ func (this *Trie) Search(word string) bool {
 
 /** Returns if there is any word in the trie that starts with the given prefix. */
 func (this *Trie) StartsWith(prefix string) bool {
-	lens := len(prefix)
+	node := this.searchPrefix(prefix)
+	return node != nil
+}
+
+
+func (this *Trie) searchPrefix(prefix string) *Trie {
 	node := this
-	for i := 0; i < lens; i++ {
+	l := len(prefix)
+	for i := 0; i < l; i++ {
 		idx := prefix[i] - 'a'
 		if node.next[idx] == nil {
-			return false
+			return nil
 		}
 		node = node.next[idx]
 	}
-	return true
+	return node
 }
 
 

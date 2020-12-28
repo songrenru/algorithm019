@@ -15,47 +15,49 @@ func exist(board [][]byte, word string) bool {
 	rows, cols := len(board), len(board[0])
 	l := len(word)
 
-	var dfs func(i, j, deep int, path []byte) bool
-	dfs = func(i, j, deep int, path []byte) bool {
+	var dfs func(i, j, k int) bool
+	dfs = func(i, j, k int) bool {
 		// recursion terminator
+		// 边界检测
 		if i < 0 || j < 0 || i == rows || j == cols {
 			return false
 		}
+		// 去重
 		if board[i][j] == '1' {
 			return false
 		}
-		if word[deep] != board[i][j] {
+		// 剪枝
+		if board[i][j] != word[k] {
 			return false
 		}
-		// process current logic
-		// drill down
-		oldChar := board[i][j]
-		board[i][j] = '1'
-		path = append(path, oldChar)
-		deep++
-		if deep == l && string(path) == word {
+		// 找到字符串
+		if k == l - 1 {
 			return true
 		}
-		
-		for k := 0; k < 4; k++ {
-			if dfs(i + directs[k][0], j + directs[k][1], deep, path) {
+		// process current logic
+		old := board[i][j]
+		board[i][j] = '1'
+		// dirll down
+		for m := 0; m < 4; m++ {
+			if dfs(i + directs[m][0], j + directs[m][1], k + 1) {
 				return true
 			}
 		}
 		// revert status if needed
-		path = path[:len(path) - 1]
-		board[i][j] = oldChar
+		board[i][j] = old
 		return false
 	}
-	
+
 	for i := 0; i < rows; i++ {
 		for j := 0; j < cols; j++ {
-			if dfs(i, j, 0, []byte{}) {
+			if dfs(i, j, 0) {
 				return true
 			}
 		}
 	}
 	return false
 }
+
+
 // @lc code=end
 

@@ -6,28 +6,35 @@
 
 // @lc code=start
 func numIslands(grid [][]byte) int {
-	var dfs func(r, c int)
-	dfs = func(r, c int) {
-		// recursion terminator
-		if !inArea(grid, r, c) || grid[r][c] != '1' {
+	directs := [4][2]int{
+		{-1, 0}, // up
+		{1, 0}, // down
+		{0, -1}, // left
+		{0, 1}, // right
+	}
+	rows, cols := len(grid), len(grid[0])
+	var dfs func(i, j int)
+	dfs = func(i, j int) {
+		if i < 0 || j < 0 || i == rows || j == cols {
 			return
 		}
-		// process current logic
-		grid[r][c] = 2
-		// drill down
-		dfs(r - 1, c);
-		dfs(r + 1, c);
-		dfs(r, c - 1);
-		dfs(r, c + 1);
+	
+		if grid[i][j] == '0' {
+			return
+		}
+	
+		grid[i][j] = '0'
+		
+		for k := 0; k < 4; k++ {
+			dfs(i + directs[k][0], j + directs[k][1])
+		}
 	}
 
-	rowNum := len(grid)
-	colNum := len(grid[0])
 	count := 0
-	for r := 0; r < rowNum; r++ {
-		for c := 0; c < colNum; c++ {
-			if grid[r][c] == '1' {
-				dfs(r, c)
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			if grid[i][j] == '1' {
+				dfs(i, j)
 				count++
 			}
 		}
@@ -35,8 +42,6 @@ func numIslands(grid [][]byte) int {
 	return count
 }
 
-func inArea(grid [][]byte, r, c int) bool {
-	return 0 <= r && r < len(grid) && 0 <= c && c < len(grid[0])
-}
+
 // @lc code=end
 

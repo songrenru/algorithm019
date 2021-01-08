@@ -52,6 +52,6 @@
 3. 优点：原理简单、容易实现
 4. 缺点：维护成本高，增加删除（logN）会改变维度
 ## queue、stack
-1. queue,dequeue(double end),priority queue
-2. stack,minStack,最近相关性（如括号匹配）
+1. queue,dequeue(double end),priority queue**先来后到**
+2. stack,minStack,**最近相关性**（如括号匹配）
 3. 固定窗口的题目，用dequeue解决

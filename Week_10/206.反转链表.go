@@ -12,29 +12,18 @@
  *     Next *ListNode
  * }
  */
-func reverseList(head *ListNode) *ListNode {
+ func reverseList(head *ListNode) *ListNode {
+	// 利用额外空间的递归
 	// 迭代
 	// 递归
-	if head == nil {
-		return nil
+	if head == nil || head.Next == nil {
+		return head
 	}
-	dummyHead := new(ListNode)
-	var helper func(node *ListNode) *ListNode
-	helper = func(node *ListNode) *ListNode {
-		if node.Next == nil {
-			dummyHead.Next = node
-			return node
-		}
-	
-		newHead := helper(node.Next)
-		newHead.Next = node
-		return node
-	}
-	head = helper(head)
+	newHead := reverseList(head.Next)
+	// newHead.Next = head // newHead只是作为返回结果，往上传递
+	head.Next.Next = head // 传导，下一个节点指向当前节点
 	head.Next = nil
-	return dummyHead.Next
+	return newHead
 }
-
-
 // @lc code=end
 

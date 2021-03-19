@@ -14,6 +14,8 @@
  * }
  */
 func maxDepth(root *TreeNode) int {
+	// 递归
+	// 广度优先遍历
 	if root == nil {
 		return 0
 	}
@@ -35,5 +37,6 @@ func maxDepth(root *TreeNode) int {
 	}
 	return depth
 }
+
 // @lc code=end
 

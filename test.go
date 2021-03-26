@@ -1,44 +1,81 @@
 package main
 
 import (
-	"container/heap"
+	"bufio"
 	"fmt"
-	"strings"
+	"log"
+	"net"
 )
 
 func main() {
-	h := &IntHeap{2, 3, 5}
-	heap.Init(h)
-	res := [1690]int{1}
-	n := 0
-	for n < 1689 {
-		min := heap.Pop(h).(int)
-		if min != res[n] {
-			n++
-			res[n] = min
-			heap.Push(h, min*2)
-			heap.Push(h, min*3)
-			heap.Push(h, min*5)
-		}
+
+	ln, err := net.Listen("tcp", "localhost:1234")
+	if err != nil {
+		log.Fatalln(err)
 	}
 
-	fmt.Println(strings.Replace(strings.Trim(fmt.Sprint(res), "[]"), " ", ",", -1))
+	go monitor()
+
+	for {
+		conn, err := ln.Accept()
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		go handleConnection(conn)
+	}
 }
 
-type IntHeap []int
+var (
+	message  = make(chan string)
+	entering = make(chan client)
+	leaving  = make(chan client)
+)
 
-func (h IntHeap) Len() int           { return len(h) }
-func (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }
-func (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
-func (h *IntHeap) Push(x interface{}) {
-	// Push and Pop use pointer receivers because they modify the slice's length,
-	// not just its contents.
-	*h = append(*h, x.(int))
+type client chan<- string
+
+func monitor() {
+	clients := make(map[client]bool)
+
+	for {
+		select {
+		case ch := <-entering:
+			clients[ch] = true
+		case ch := <-leaving:
+			delete(clients, ch)
+		case msg := <-message:
+			for ch := range clients {
+				ch <- msg // opti
+			}
+		}
+	}
 }
-func (h *IntHeap) Pop() interface{} {
-	old := *h
-	n := len(old)
-	x := old[n-1]
-	*h = old[0 : n-1]
-	return x
+
+func handleConnection(conn net.Conn) {
+	ch := make(chan string)
+	go clientWriter(conn, ch)
+
+	who := conn.RemoteAddr().String()
+	msg := fmt.Sprintf("u r :%s , welcome!\r\n", who)
+	ch <- msg
+
+	message <- who + " has arrived!"
+	entering <- ch
+
+	input := bufio.NewScanner(conn)
+	for input.Scan() {
+		message <- who + ": " + input.Text()
+	}
+
+	leaving <- ch
+	message <- who + " has left!"
+
+	close(ch)
+	conn.Close()
+}
+
+func clientWriter(conn net.Conn, ch <-chan string) {
+	for msg := range ch {
+		fmt.Fprintln(conn, msg)
+	}
 }

@@ -6,19 +6,19 @@
 
 // @lc code=start
 func robotSim(commands []int, obstacles [][]int) int {
-	const (
-		noth = iota
-		east
-		south
-		west
-	)
+	directs := [4][2]int{
+		{0, 1},  // noth = iota
+		{1, 0},  // east
+		{0, -1}, // south
+		{-1, 0}, // west
+	}
 	obstaclesSet := make(map[[2]int]bool)
 	for _, obstacle := range obstacles {
 		obstaclesSet[[2]int{obstacle[0], obstacle[1]}] = true
 	}
 
 	res := 0
-	direct := noth
+	direct := 0 // noth = 0
 	x, y := 0, 0
 	for _, cmd := range commands {
 		if cmd == -1 {
@@ -28,25 +28,13 @@ func robotSim(commands []int, obstacles [][]int) int {
 			direct = (direct + 3) % 4
 			continue
 		} else {
+			xChg, yChg := directs[direct][0], directs[direct][1]
 			for i := 0; i < cmd; i++ {
-				yChg , xChg := 0, 0
-				switch direct {
-				case noth:
-					y++
-					yChg--
-				case east:
-					x++
-					xChg--
-				case south:
-					y--
-					yChg++
-				case west:
-					x--
-					xChg++
-				}
+				x += xChg
+				y += yChg
 				if obstaclesSet[[2]int{x, y}] {
-					x += xChg
-					y += yChg
+					x -= xChg
+					y -= yChg
 					break
 				}
 			}
@@ -59,5 +47,6 @@ func robotSim(commands []int, obstacles [][]int) int {
 
 	return res
 }
+
 // @lc code=end
 

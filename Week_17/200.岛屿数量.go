@@ -8,7 +8,7 @@
 func numIslands(grid [][]byte) int {
 	// dfs
 	// union-find disjoint sets
-	// bfs
+	// bfs // 内存超载
 	r, c := len(grid), len(grid[0])
 	num := 0
 	for i := 0; i < r; i++ {

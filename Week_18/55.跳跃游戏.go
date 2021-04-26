@@ -6,9 +6,10 @@
 
 // @lc code=start
 func canJump(nums []int) bool {
+	// [2,3,1,1,4]
 	endReachable := len(nums) - 1
-	for i := endReachable; i >= 0; i-- {
-		if nums[i]+i >= endReachable {
+	for i := endReachable - 1; i >= 0; i-- {
+		if i+nums[i] >= endReachable {
 			endReachable = i
 		}
 	}

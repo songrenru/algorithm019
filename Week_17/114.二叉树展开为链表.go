@@ -37,9 +37,6 @@ func flatten(root *TreeNode) {
 		inorderTravel(right)
 	}
 	inorderTravel(root)
-
-	// 把root指过去
-	root.Right = newRoot.Right.Right
 }
 
 // @lc code=end

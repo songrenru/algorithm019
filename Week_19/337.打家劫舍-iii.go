@@ -13,25 +13,22 @@
  *     Right *TreeNode
  * }
  */
-var mem map[*TreeNode]int = make(map[*TreeNode]int)
-
 func rob(root *TreeNode) int {
+	dp := treeDp(root)
+	return max(dp[0], dp[1])
+}
+
+func treeDp(root *TreeNode) [2]int {
 	if root == nil {
-		return 0
-	}
-	if money, ok := mem[root]; ok {
-		return money
+		return [2]int{}
 	}
 
-	money := root.Val
-	if root.Left != nil {
-		money += rob(root.Left.Left) + rob(root.Left.Right)
-	}
-	if root.Right != nil {
-		money += rob(root.Right.Left) + rob(root.Right.Right)
-	}
-	mem[root] = max(money, rob(root.Left)+rob(root.Right))
-	return mem[root]
+	left := treeDp(root.Left)
+	right := treeDp(root.Right)
+	res := [2]int{}
+	res[0] = max(left[0], left[1]) + max(right[0], right[1])
+	res[1] = root.Val + left[0] + right[0]
+	return res
 }
 
 func max(i, j int) int {

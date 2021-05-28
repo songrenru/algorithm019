@@ -6,13 +6,15 @@
 
 // @lc code=start
 func findWords(board [][]byte, words []string) []string {
-	// 构造字典树
+	// 1. 构造字典树
 	trie := new(Trie)
 	for _, word := range words {
 		trie.Insert(word)
 	}
-	// 定义方向
-	directs := [4][2]int{
+
+	// 2. dfs
+	// 2.1 定义方向
+	directtions := [4][2]int{
 		{-1, 0}, // up
 		{1, 0},  // down
 		{0, -1}, // left
@@ -21,6 +23,7 @@ func findWords(board [][]byte, words []string) []string {
 	rows, cols := len(board), len(board[0])
 	res := []string{}
 
+	// 2.2 dfs
 	var dfs func(i, j int, node *Trie)
 	dfs = func(i, j int, node *Trie) {
 		// 越界检测
@@ -37,15 +40,15 @@ func findWords(board [][]byte, words []string) []string {
 		if newNode == nil {
 			return
 		}
+		// 剪枝
 		if newNode.isEnd {
-			// 剪枝
 			newNode.isEnd = false
 			res = append(res, newNode.word)
 		}
 		// 继续遍历
 		board[i][j] = '#'
 		for k := 0; k < 4; k++ {
-			dfs(i+directs[k][0], j+directs[k][1], newNode)
+			dfs(i+directtions[k][0], j+directtions[k][1], newNode)
 		}
 		// 恢复
 		board[i][j] = c
